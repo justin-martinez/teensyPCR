@@ -1,0 +1,400 @@
+   1               		.file	"i2c.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               		.cfi_sections	.debug_frame
+  10               		.section	.text.ERROR1,"ax",@progbits
+  11               	.global	ERROR1
+  13               	ERROR1:
+  14               	.LFB7:
+  15               		.file 1 "lib/i2c/i2c.c"
+   1:lib/i2c/i2c.c **** #include "i2c.h"
+   2:lib/i2c/i2c.c **** 
+   3:lib/i2c/i2c.c **** 
+   4:lib/i2c/i2c.c **** #define START 0x08
+   5:lib/i2c/i2c.c **** #define ReSTART 0x10
+   6:lib/i2c/i2c.c **** #define SLAWACK 0x18
+   7:lib/i2c/i2c.c **** #define SLAWnoACK 0x20
+   8:lib/i2c/i2c.c **** 
+   9:lib/i2c/i2c.c **** //TWI bus lines: PD0 SCL, PD1 SDA.
+  10:lib/i2c/i2c.c **** //IC add is 0x6A
+  11:lib/i2c/i2c.c **** //charges at .5 amps, limited to 1 amp
+  12:lib/i2c/i2c.c **** 
+  13:lib/i2c/i2c.c **** 
+  14:lib/i2c/i2c.c **** // TWDR shift register contains address and data
+  15:lib/i2c/i2c.c **** // TWCR contains acknowledgment bit manipulation in recieve mode
+  16:lib/i2c/i2c.c **** // TWSR contains acknowledgment bit value check
+  17:lib/i2c/i2c.c **** void ERROR1()
+  18:lib/i2c/i2c.c **** {
+  16               		.loc 1 18 0
+  17               		.cfi_startproc
+  18               	/* prologue: function */
+  19               	/* frame size = 0 */
+  20               	/* stack size = 0 */
+  21               	.L__stack_usage = 0
+  22               	.L2:
+  19:lib/i2c/i2c.c ****   while(1);
+  23               		.loc 1 19 0 discriminator 1
+  24 0000 00C0      		rjmp .L2
+  25               		.cfi_endproc
+  26               	.LFE7:
+  28               		.section	.text.ERROR2,"ax",@progbits
+  29               	.global	ERROR2
+  31               	ERROR2:
+  32               	.LFB8:
+  20:lib/i2c/i2c.c **** 
+  21:lib/i2c/i2c.c **** }
+  22:lib/i2c/i2c.c **** 
+  23:lib/i2c/i2c.c **** void ERROR2()
+  24:lib/i2c/i2c.c **** {	
+  33               		.loc 1 24 0
+  34               		.cfi_startproc
+  35               	/* prologue: function */
+  36               	/* frame size = 0 */
+  37               	/* stack size = 0 */
+  38               	.L__stack_usage = 0
+  39 0000 0895      		ret
+  40               		.cfi_endproc
+  41               	.LFE8:
+  43               		.section	.text.initI2C,"ax",@progbits
+  44               	.global	initI2C
+  46               	initI2C:
+  47               	.LFB9:
+  25:lib/i2c/i2c.c ****   return;
+  26:lib/i2c/i2c.c **** }
+  27:lib/i2c/i2c.c **** 
+  28:lib/i2c/i2c.c **** 
+  29:lib/i2c/i2c.c **** void initI2C()
+  30:lib/i2c/i2c.c **** {
+  48               		.loc 1 30 0
+  49               		.cfi_startproc
+  50               	/* prologue: function */
+  51               	/* frame size = 0 */
+  52               	/* stack size = 0 */
+  53               	.L__stack_usage = 0
+  31:lib/i2c/i2c.c ****   DDRD = 0;
+  54               		.loc 1 31 0
+  55 0000 1AB8      		out 0xa,__zero_reg__
+  32:lib/i2c/i2c.c ****   PORTD = ((1<<DDD0) | (1<<DDD1));     //PD0 and PD1
+  56               		.loc 1 32 0
+  57 0002 83E0      		ldi r24,lo8(3)
+  58 0004 8BB9      		out 0xb,r24
+  33:lib/i2c/i2c.c ****   TWBR = 11;  //sets bitrate
+  59               		.loc 1 33 0
+  60 0006 8BE0      		ldi r24,lo8(11)
+  61 0008 8093 B800 		sts 184,r24
+  62 000c 0895      		ret
+  63               		.cfi_endproc
+  64               	.LFE9:
+  66               		.section	.text.batteryICI2C,"ax",@progbits
+  67               	.global	batteryICI2C
+  69               	batteryICI2C:
+  70               	.LFB10:
+  34:lib/i2c/i2c.c **** }
+  35:lib/i2c/i2c.c **** 
+  36:lib/i2c/i2c.c **** void batteryICI2C(uint8_t DATA1, uint8_t DATA2)
+  37:lib/i2c/i2c.c **** {
+  71               		.loc 1 37 0
+  72               		.cfi_startproc
+  73               	.LVL0:
+  74               	/* prologue: function */
+  75               	/* frame size = 0 */
+  76               	/* stack size = 0 */
+  77               	.L__stack_usage = 0
+  38:lib/i2c/i2c.c **** 
+  39:lib/i2c/i2c.c ****   TWCR = (1<<TWINT) | (1<<TWSTA) | (1<<TWEN); //Send Start condition
+  78               		.loc 1 39 0
+  79 0000 94EA      		ldi r25,lo8(-92)
+  80 0002 9093 BC00 		sts 188,r25
+  81               	.L6:
+  40:lib/i2c/i2c.c **** 
+  41:lib/i2c/i2c.c ****   while (!(TWCR & (1<<TWINT)))    //breaks when TWINT == 1
+  82               		.loc 1 41 0 discriminator 1
+  83 0006 9091 BC00 		lds r25,188
+  84 000a 97FF      		sbrs r25,7
+  85 000c 00C0      		rjmp .L6
+  42:lib/i2c/i2c.c ****     ;			//Wait for transmission to complete
+  43:lib/i2c/i2c.c **** 
+  44:lib/i2c/i2c.c ****   if ((TWSR & 0xF8) != START)
+  86               		.loc 1 44 0
+  87 000e 9091 B900 		lds r25,185
+  45:lib/i2c/i2c.c ****     ERROR2();               //If START condition not received, error
+  46:lib/i2c/i2c.c **** 
+  47:lib/i2c/i2c.c **** 
+  48:lib/i2c/i2c.c ****   TWDR = 0xD4;
+  88               		.loc 1 48 0
+  89 0012 94ED      		ldi r25,lo8(-44)
+  90 0014 9093 BB00 		sts 187,r25
+  49:lib/i2c/i2c.c ****   TWCR = (1<<TWINT) | (1<<TWEN);  //Load SLA+W then initiate transfer
+  91               		.loc 1 49 0
+  92 0018 94E8      		ldi r25,lo8(-124)
+  93 001a 9093 BC00 		sts 188,r25
+  94               	.L7:
+  50:lib/i2c/i2c.c **** 
+  51:lib/i2c/i2c.c ****   while (!(TWCR & (1<<TWINT)))
+  95               		.loc 1 51 0 discriminator 1
+  96 001e 9091 BC00 		lds r25,188
+  97 0022 97FF      		sbrs r25,7
+  98 0024 00C0      		rjmp .L7
+  52:lib/i2c/i2c.c ****     ;			//Wait for transmission to complete
+  53:lib/i2c/i2c.c **** 
+  54:lib/i2c/i2c.c **** 
+  55:lib/i2c/i2c.c ****   if ((TWSR & 0xF8) != 0x18)
+  99               		.loc 1 55 0
+ 100 0026 9091 B900 		lds r25,185
+  56:lib/i2c/i2c.c ****     ERROR2();		//ERROR if SLA+W not sent and acknowledged
+  57:lib/i2c/i2c.c **** 
+  58:lib/i2c/i2c.c **** 
+  59:lib/i2c/i2c.c ****   TWDR = DATA1;
+ 101               		.loc 1 59 0
+ 102 002a 8093 BB00 		sts 187,r24
+  60:lib/i2c/i2c.c ****   TWCR = (1<<TWINT) | (1<<TWEN);  //Load SDA, start transmission
+ 103               		.loc 1 60 0
+ 104 002e 84E8      		ldi r24,lo8(-124)
+ 105               	.LVL1:
+ 106 0030 8093 BC00 		sts 188,r24
+ 107               	.LVL2:
+ 108               	.L8:
+  61:lib/i2c/i2c.c **** 
+  62:lib/i2c/i2c.c ****   while (!(TWCR & (1<<TWINT)))
+ 109               		.loc 1 62 0 discriminator 1
+ 110 0034 8091 BC00 		lds r24,188
+ 111 0038 87FF      		sbrs r24,7
+ 112 003a 00C0      		rjmp .L8
+  63:lib/i2c/i2c.c ****     ;			//Wait for transmission to complete
+  64:lib/i2c/i2c.c **** 
+  65:lib/i2c/i2c.c ****   if((TWSR & 0xF8) != 0x28)	//ERROR if SDA
+ 113               		.loc 1 65 0
+ 114 003c 8091 B900 		lds r24,185
+  66:lib/i2c/i2c.c ****     ERROR2();
+  67:lib/i2c/i2c.c **** 
+  68:lib/i2c/i2c.c ****   TWDR = DATA2;
+ 115               		.loc 1 68 0
+ 116 0040 6093 BB00 		sts 187,r22
+  69:lib/i2c/i2c.c ****   TWCR = (1<<TWINT) | (1<<TWEN);  //Load SDA, start transmission
+ 117               		.loc 1 69 0
+ 118 0044 84E8      		ldi r24,lo8(-124)
+ 119 0046 8093 BC00 		sts 188,r24
+ 120               	.L9:
+  70:lib/i2c/i2c.c **** 
+  71:lib/i2c/i2c.c ****   while (!(TWCR & (1<<TWINT)))
+ 121               		.loc 1 71 0 discriminator 1
+ 122 004a 8091 BC00 		lds r24,188
+ 123 004e 87FF      		sbrs r24,7
+ 124 0050 00C0      		rjmp .L9
+  72:lib/i2c/i2c.c ****     ;
+  73:lib/i2c/i2c.c **** 
+  74:lib/i2c/i2c.c ****   if((TWSR & 0xF8) != 0x28)
+ 125               		.loc 1 74 0
+ 126 0052 8091 B900 		lds r24,185
+  75:lib/i2c/i2c.c ****     ERROR2();
+  76:lib/i2c/i2c.c **** 
+  77:lib/i2c/i2c.c ****   TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWSTO); //send stop condition
+ 127               		.loc 1 77 0
+ 128 0056 84E9      		ldi r24,lo8(-108)
+ 129 0058 8093 BC00 		sts 188,r24
+ 130 005c 0895      		ret
+ 131               		.cfi_endproc
+ 132               	.LFE10:
+ 134               		.section	.text.I2C_receive_batteryIC,"ax",@progbits
+ 135               	.global	I2C_receive_batteryIC
+ 137               	I2C_receive_batteryIC:
+ 138               	.LFB11:
+  78:lib/i2c/i2c.c **** 
+  79:lib/i2c/i2c.c **** }	
+  80:lib/i2c/i2c.c **** 
+  81:lib/i2c/i2c.c **** 
+  82:lib/i2c/i2c.c **** uint8_t I2C_receive_batteryIC(uint8_t data2)  //parameters: register address    returns: register
+  83:lib/i2c/i2c.c **** {
+ 139               		.loc 1 83 0
+ 140               		.cfi_startproc
+ 141               	.LVL3:
+ 142               	/* prologue: function */
+ 143               	/* frame size = 0 */
+ 144               	/* stack size = 0 */
+ 145               	.L__stack_usage = 0
+  84:lib/i2c/i2c.c **** 
+  85:lib/i2c/i2c.c ****   uint8_t data1 = 0; 
+  86:lib/i2c/i2c.c **** 
+  87:lib/i2c/i2c.c **** 
+  88:lib/i2c/i2c.c ****   TWCR = (1<<TWINT) | (1<<TWSTA) | (1<<TWEN); //Send Start condition
+ 146               		.loc 1 88 0
+ 147 0000 94EA      		ldi r25,lo8(-92)
+ 148 0002 9093 BC00 		sts 188,r25
+ 149               	.L16:
+  89:lib/i2c/i2c.c **** 
+  90:lib/i2c/i2c.c ****   while (!(TWCR & (1<<TWINT)))    //breaks when TWINT == 1
+ 150               		.loc 1 90 0 discriminator 1
+ 151 0006 9091 BC00 		lds r25,188
+ 152 000a 97FF      		sbrs r25,7
+ 153 000c 00C0      		rjmp .L16
+  91:lib/i2c/i2c.c ****     ;			//Wait for transmission to complete
+  92:lib/i2c/i2c.c **** 
+  93:lib/i2c/i2c.c ****   if ((TWSR & 0xF8) != START)
+ 154               		.loc 1 93 0
+ 155 000e 9091 B900 		lds r25,185
+  94:lib/i2c/i2c.c ****     ERROR2();               //If START condition not received, error
+  95:lib/i2c/i2c.c **** 
+  96:lib/i2c/i2c.c **** 
+  97:lib/i2c/i2c.c ****   TWDR = 0xD4;
+ 156               		.loc 1 97 0
+ 157 0012 94ED      		ldi r25,lo8(-44)
+ 158 0014 9093 BB00 		sts 187,r25
+  98:lib/i2c/i2c.c ****   TWCR = (1<<TWINT) | (1<<TWEN);  //Load SLA+W then initiate transfer
+ 159               		.loc 1 98 0
+ 160 0018 94E8      		ldi r25,lo8(-124)
+ 161 001a 9093 BC00 		sts 188,r25
+ 162               	.L17:
+  99:lib/i2c/i2c.c **** 
+ 100:lib/i2c/i2c.c ****   while (!(TWCR & (1<<TWINT)))
+ 163               		.loc 1 100 0 discriminator 1
+ 164 001e 9091 BC00 		lds r25,188
+ 165 0022 97FF      		sbrs r25,7
+ 166 0024 00C0      		rjmp .L17
+ 101:lib/i2c/i2c.c ****     ;			//Wait for transmission to complete
+ 102:lib/i2c/i2c.c **** 
+ 103:lib/i2c/i2c.c **** 
+ 104:lib/i2c/i2c.c ****   if ((TWSR & 0xF8) != 0x18)
+ 167               		.loc 1 104 0
+ 168 0026 9091 B900 		lds r25,185
+ 105:lib/i2c/i2c.c ****     ERROR2();		//ERROR if SLA+W not sent and acknowledged
+ 106:lib/i2c/i2c.c **** 
+ 107:lib/i2c/i2c.c **** 
+ 108:lib/i2c/i2c.c ****   TWDR = data2;
+ 169               		.loc 1 108 0
+ 170 002a 8093 BB00 		sts 187,r24
+ 109:lib/i2c/i2c.c ****   TWCR = (1<<TWINT) | (1<<TWEN);  //Load data, start transmission
+ 171               		.loc 1 109 0
+ 172 002e 84E8      		ldi r24,lo8(-124)
+ 173               	.LVL4:
+ 174 0030 8093 BC00 		sts 188,r24
+ 175               	.LVL5:
+ 176               	.L18:
+ 110:lib/i2c/i2c.c **** 
+ 111:lib/i2c/i2c.c ****   while (!(TWCR & (1<<TWINT)))
+ 177               		.loc 1 111 0 discriminator 1
+ 178 0034 8091 BC00 		lds r24,188
+ 179 0038 87FF      		sbrs r24,7
+ 180 003a 00C0      		rjmp .L18
+ 112:lib/i2c/i2c.c ****     ;			//Wait for transmission to complete
+ 113:lib/i2c/i2c.c **** 
+ 114:lib/i2c/i2c.c ****   if((TWSR & 0xF8) != 0x28)	
+ 181               		.loc 1 114 0
+ 182 003c 8091 B900 		lds r24,185
+ 115:lib/i2c/i2c.c ****     ERROR2();
+ 116:lib/i2c/i2c.c **** 
+ 117:lib/i2c/i2c.c **** 
+ 118:lib/i2c/i2c.c **** 
+ 119:lib/i2c/i2c.c **** 
+ 120:lib/i2c/i2c.c **** 
+ 121:lib/i2c/i2c.c **** 
+ 122:lib/i2c/i2c.c ****   TWCR = (1<<TWINT) | (1<<TWSTA) | (1<<TWEN);    //repeat start condition
+ 183               		.loc 1 122 0
+ 184 0040 84EA      		ldi r24,lo8(-92)
+ 185 0042 8093 BC00 		sts 188,r24
+ 186               	.L19:
+ 123:lib/i2c/i2c.c **** 
+ 124:lib/i2c/i2c.c ****   while (!(TWCR & (1<<TWINT)))    //breaks when TWINT == 1
+ 187               		.loc 1 124 0 discriminator 1
+ 188 0046 8091 BC00 		lds r24,188
+ 189 004a 87FF      		sbrs r24,7
+ 190 004c 00C0      		rjmp .L19
+ 125:lib/i2c/i2c.c ****     ;			//Wait for transmission to complete
+ 126:lib/i2c/i2c.c **** 
+ 127:lib/i2c/i2c.c ****   if((TWSR & 0xF8) != 0x10)  //Error for repeat start condition
+ 191               		.loc 1 127 0
+ 192 004e 8091 B900 		lds r24,185
+ 128:lib/i2c/i2c.c ****     ERROR2();
+ 129:lib/i2c/i2c.c **** 
+ 130:lib/i2c/i2c.c **** 
+ 131:lib/i2c/i2c.c ****   TWDR = 0xD5;   //SLA+R
+ 193               		.loc 1 131 0
+ 194 0052 85ED      		ldi r24,lo8(-43)
+ 195 0054 8093 BB00 		sts 187,r24
+ 132:lib/i2c/i2c.c **** 
+ 133:lib/i2c/i2c.c ****   TWCR = (1<<TWINT) | (1<<TWEN);  //load data
+ 196               		.loc 1 133 0
+ 197 0058 84E8      		ldi r24,lo8(-124)
+ 198 005a 8093 BC00 		sts 188,r24
+ 199               	.L20:
+ 134:lib/i2c/i2c.c **** 
+ 135:lib/i2c/i2c.c **** 
+ 136:lib/i2c/i2c.c ****   while (!(TWCR & (1<<TWINT)))
+ 200               		.loc 1 136 0 discriminator 1
+ 201 005e 8091 BC00 		lds r24,188
+ 202 0062 87FF      		sbrs r24,7
+ 203 0064 00C0      		rjmp .L20
+ 137:lib/i2c/i2c.c ****     ;			//Wait for transmission to complete
+ 138:lib/i2c/i2c.c **** 
+ 139:lib/i2c/i2c.c **** 
+ 140:lib/i2c/i2c.c ****   if((TWSR & 0xF8) != 0x40)  // checks if SLA+R and ACK has been sent
+ 204               		.loc 1 140 0
+ 205 0066 8091 B900 		lds r24,185
+ 141:lib/i2c/i2c.c ****     ERROR2();
+ 142:lib/i2c/i2c.c **** 
+ 143:lib/i2c/i2c.c **** 
+ 144:lib/i2c/i2c.c **** 
+ 145:lib/i2c/i2c.c ****   TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWEA);  //ready to receive,  ACK
+ 206               		.loc 1 145 0
+ 207 006a 84EC      		ldi r24,lo8(-60)
+ 208 006c 8093 BC00 		sts 188,r24
+ 209               	.L21:
+ 146:lib/i2c/i2c.c **** 
+ 147:lib/i2c/i2c.c ****   while (!(TWCR & (1<<TWINT)))  // wait for reception
+ 210               		.loc 1 147 0 discriminator 1
+ 211 0070 8091 BC00 		lds r24,188
+ 212 0074 87FF      		sbrs r24,7
+ 213 0076 00C0      		rjmp .L21
+ 148:lib/i2c/i2c.c ****     ;
+ 149:lib/i2c/i2c.c **** 
+ 150:lib/i2c/i2c.c ****   data1 = TWDR;
+ 214               		.loc 1 150 0
+ 215 0078 8091 BB00 		lds r24,187
+ 216               	.LVL6:
+ 151:lib/i2c/i2c.c **** 
+ 152:lib/i2c/i2c.c ****   TWCR = (1<<TWINT) | (1<<TWEN);   //send no ACK
+ 217               		.loc 1 152 0
+ 218 007c 94E8      		ldi r25,lo8(-124)
+ 219 007e 9093 BC00 		sts 188,r25
+ 220               	.L22:
+ 153:lib/i2c/i2c.c **** 
+ 154:lib/i2c/i2c.c ****   while (!(TWCR & (1<<TWINT)))  // wait for reception
+ 221               		.loc 1 154 0 discriminator 1
+ 222 0082 9091 BC00 		lds r25,188
+ 223 0086 97FF      		sbrs r25,7
+ 224 0088 00C0      		rjmp .L22
+ 155:lib/i2c/i2c.c ****     ;
+ 156:lib/i2c/i2c.c **** 
+ 157:lib/i2c/i2c.c ****   TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWSTO); //send stop condition
+ 225               		.loc 1 157 0
+ 226 008a 94E9      		ldi r25,lo8(-108)
+ 227 008c 9093 BC00 		sts 188,r25
+ 158:lib/i2c/i2c.c **** 
+ 159:lib/i2c/i2c.c ****   return data1; 
+ 160:lib/i2c/i2c.c **** 
+ 161:lib/i2c/i2c.c **** }
+ 228               		.loc 1 161 0
+ 229 0090 0895      		ret
+ 230               		.cfi_endproc
+ 231               	.LFE11:
+ 233               		.text
+ 234               	.Letext0:
+ 235               		.file 2 "/usr/avr/include/stdint.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 i2c.c
+     /tmp/ccIYSniF.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccIYSniF.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccIYSniF.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccIYSniF.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccIYSniF.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccIYSniF.s:13     .text.ERROR1:0000000000000000 ERROR1
+     /tmp/ccIYSniF.s:31     .text.ERROR2:0000000000000000 ERROR2
+     /tmp/ccIYSniF.s:46     .text.initI2C:0000000000000000 initI2C
+     /tmp/ccIYSniF.s:69     .text.batteryICI2C:0000000000000000 batteryICI2C
+     /tmp/ccIYSniF.s:137    .text.I2C_receive_batteryIC:0000000000000000 I2C_receive_batteryIC
+
+NO UNDEFINED SYMBOLS

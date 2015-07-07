@@ -1,0 +1,308 @@
+   1               		.file	"spi.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               		.cfi_sections	.debug_frame
+  10               		.section	.text.SPI_masterInit,"ax",@progbits
+  11               	.global	SPI_masterInit
+  13               	SPI_masterInit:
+  14               	.LFB7:
+  15               		.file 1 "lib/spi/spi.c"
+   1:lib/spi/spi.c **** #include"spi.h"
+   2:lib/spi/spi.c **** 
+   3:lib/spi/spi.c **** 
+   4:lib/spi/spi.c **** 
+   5:lib/spi/spi.c **** /************* Basic SPI Functions ****************/
+   6:lib/spi/spi.c **** 
+   7:lib/spi/spi.c **** 
+   8:lib/spi/spi.c **** 
+   9:lib/spi/spi.c **** 
+  10:lib/spi/spi.c **** void SPI_masterInit()
+  11:lib/spi/spi.c **** {
+  16               		.loc 1 11 0
+  17               		.cfi_startproc
+  18               	/* prologue: function */
+  19               	/* frame size = 0 */
+  20               	/* stack size = 0 */
+  21               	.L__stack_usage = 0
+  12:lib/spi/spi.c **** 	/* Set MOSI, /SS and SCK to output, all others to input */
+  13:lib/spi/spi.c **** 	DDRB = ((1<<DDB0) | (1<<DDB2) | (1<<DDB1));
+  22               		.loc 1 13 0
+  23 0000 87E0      		ldi r24,lo8(7)
+  24 0002 84B9      		out 0x4,r24
+  14:lib/spi/spi.c **** 
+  15:lib/spi/spi.c **** 	/* Enable SPI and Master mode, set clock rate to fck/4 */
+  16:lib/spi/spi.c **** 	SPCR = (1<<SPE) | (1<<MSTR);
+  25               		.loc 1 16 0
+  26 0004 80E5      		ldi r24,lo8(80)
+  27 0006 8CBD      		out 0x2c,r24
+  28 0008 0895      		ret
+  29               		.cfi_endproc
+  30               	.LFE7:
+  32               		.section	.text.SPI_masterReceive,"ax",@progbits
+  33               	.global	SPI_masterReceive
+  35               	SPI_masterReceive:
+  36               	.LFB8:
+  17:lib/spi/spi.c **** }
+  18:lib/spi/spi.c **** 
+  19:lib/spi/spi.c **** 
+  20:lib/spi/spi.c **** int8_t SPI_masterReceive(void)     
+  21:lib/spi/spi.c **** {
+  37               		.loc 1 21 0
+  38               		.cfi_startproc
+  39               	/* prologue: function */
+  40               	/* frame size = 0 */
+  41               	/* stack size = 0 */
+  42               	.L__stack_usage = 0
+  22:lib/spi/spi.c **** 	SPDR = 0xFF; 			// Dummy variable
+  43               		.loc 1 22 0
+  44 0000 8FEF      		ldi r24,lo8(-1)
+  45 0002 8EBD      		out 0x2e,r24
+  46               	.L3:
+  23:lib/spi/spi.c **** 	while(!(SPSR & (1<<SPIF))){}
+  47               		.loc 1 23 0 discriminator 1
+  48 0004 0DB4      		in __tmp_reg__,0x2d
+  49 0006 07FE      		sbrs __tmp_reg__,7
+  50 0008 00C0      		rjmp .L3
+  24:lib/spi/spi.c **** 	return SPDR;
+  51               		.loc 1 24 0
+  52 000a 8EB5      		in r24,0x2e
+  25:lib/spi/spi.c **** }
+  53               		.loc 1 25 0
+  54 000c 0895      		ret
+  55               		.cfi_endproc
+  56               	.LFE8:
+  58               		.section	.text.SPI_masterTransmit,"ax",@progbits
+  59               	.global	SPI_masterTransmit
+  61               	SPI_masterTransmit:
+  62               	.LFB9:
+  26:lib/spi/spi.c **** 
+  27:lib/spi/spi.c **** int8_t SPI_masterTransmit(int8_t cData)
+  28:lib/spi/spi.c **** {	
+  63               		.loc 1 28 0
+  64               		.cfi_startproc
+  65               	.LVL0:
+  66               	/* prologue: function */
+  67               	/* frame size = 0 */
+  68               	/* stack size = 0 */
+  69               	.L__stack_usage = 0
+  29:lib/spi/spi.c **** 	SPDR = cData;
+  70               		.loc 1 29 0
+  71 0000 8EBD      		out 0x2e,r24
+  72               	.L7:
+  30:lib/spi/spi.c **** 	while(!(SPSR & (1<<SPIF))){}
+  73               		.loc 1 30 0 discriminator 1
+  74 0002 0DB4      		in __tmp_reg__,0x2d
+  75 0004 07FE      		sbrs __tmp_reg__,7
+  76 0006 00C0      		rjmp .L7
+  31:lib/spi/spi.c **** 	return SPDR;
+  77               		.loc 1 31 0
+  78 0008 8EB5      		in r24,0x2e
+  79               	.LVL1:
+  32:lib/spi/spi.c **** }
+  80               		.loc 1 32 0
+  81 000a 0895      		ret
+  82               		.cfi_endproc
+  83               	.LFE9:
+  85               		.section	.text.digiPotInitWiper,"ax",@progbits
+  86               	.global	digiPotInitWiper
+  88               	digiPotInitWiper:
+  89               	.LFB10:
+  33:lib/spi/spi.c **** 
+  34:lib/spi/spi.c **** 
+  35:lib/spi/spi.c **** 
+  36:lib/spi/spi.c **** 
+  37:lib/spi/spi.c **** 
+  38:lib/spi/spi.c **** 
+  39:lib/spi/spi.c **** 
+  40:lib/spi/spi.c **** /*********** Music Collab Functions ***************/
+  41:lib/spi/spi.c **** 
+  42:lib/spi/spi.c **** 
+  43:lib/spi/spi.c **** 
+  44:lib/spi/spi.c **** 
+  45:lib/spi/spi.c **** void digiPotInitWiper(uint8_t cData)
+  46:lib/spi/spi.c **** {
+  90               		.loc 1 46 0
+  91               		.cfi_startproc
+  92               	.LVL2:
+  93 0000 CF93      		push r28
+  94               	.LCFI0:
+  95               		.cfi_def_cfa_offset 3
+  96               		.cfi_offset 28, -2
+  97               	/* prologue: function */
+  98               	/* frame size = 0 */
+  99               	/* stack size = 1 */
+ 100               	.L__stack_usage = 1
+ 101 0002 C82F      		mov r28,r24
+  47:lib/spi/spi.c **** 	//  DDRD = (1<<DDD6);  //sets PD6 as output port
+  48:lib/spi/spi.c **** 	PORTD = PORTD & ~(0x40); //sets PD6 output low
+ 102               		.loc 1 48 0
+ 103 0004 5E98      		cbi 0xb,6
+  49:lib/spi/spi.c **** 	SPI_masterTransmit(0x00);
+ 104               		.loc 1 49 0
+ 105 0006 80E0      		ldi r24,0
+ 106               	.LVL3:
+ 107 0008 0E94 0000 		call SPI_masterTransmit
+ 108               	.LVL4:
+  50:lib/spi/spi.c **** 	SPI_masterTransmit(cData);
+ 109               		.loc 1 50 0
+ 110 000c 8C2F      		mov r24,r28
+ 111 000e 0E94 0000 		call SPI_masterTransmit
+ 112               	.LVL5:
+  51:lib/spi/spi.c **** 	//  _delay_ms(100);
+  52:lib/spi/spi.c **** 	PORTD = PORTD | (0x40); //sets PD output high
+ 113               		.loc 1 52 0
+ 114 0012 5E9A      		sbi 0xb,6
+ 115               	/* epilogue start */
+  53:lib/spi/spi.c **** 	//  _delay_ms(100);
+  54:lib/spi/spi.c **** }
+ 116               		.loc 1 54 0
+ 117 0014 CF91      		pop r28
+ 118               	.LVL6:
+ 119 0016 0895      		ret
+ 120               		.cfi_endproc
+ 121               	.LFE10:
+ 123               		.section	.text.accelerometerReceive,"ax",@progbits
+ 124               	.global	accelerometerReceive
+ 126               	accelerometerReceive:
+ 127               	.LFB11:
+  55:lib/spi/spi.c **** 
+  56:lib/spi/spi.c **** void accelerometerReceive(int8_t *acc)
+  57:lib/spi/spi.c **** {
+ 128               		.loc 1 57 0
+ 129               		.cfi_startproc
+ 130               	.LVL7:
+ 131 0000 CF93      		push r28
+ 132               	.LCFI1:
+ 133               		.cfi_def_cfa_offset 3
+ 134               		.cfi_offset 28, -2
+ 135 0002 DF93      		push r29
+ 136               	.LCFI2:
+ 137               		.cfi_def_cfa_offset 4
+ 138               		.cfi_offset 29, -3
+ 139               	/* prologue: function */
+ 140               	/* frame size = 0 */
+ 141               	/* stack size = 2 */
+ 142               	.L__stack_usage = 2
+ 143 0004 EC01      		movw r28,r24
+  58:lib/spi/spi.c **** 	int8_t temp;
+  59:lib/spi/spi.c **** 	//int8_t *acc = (int8_t*)malloc(6*sizeof(int8_t));
+  60:lib/spi/spi.c **** 	PORTD = PORTD & ~(0x80); //sets PD7 output low
+ 144               		.loc 1 60 0
+ 145 0006 5F98      		cbi 0xb,7
+  61:lib/spi/spi.c **** 	SPI_masterTransmit(0b11110010);//recieve XL
+ 146               		.loc 1 61 0
+ 147 0008 82EF      		ldi r24,lo8(-14)
+ 148               	.LVL8:
+ 149 000a 0E94 0000 		call SPI_masterTransmit
+ 150               	.LVL9:
+  62:lib/spi/spi.c **** 	acc[1] = SPI_masterTransmit(0x72);
+ 151               		.loc 1 62 0
+ 152 000e 82E7      		ldi r24,lo8(114)
+ 153 0010 0E94 0000 		call SPI_masterTransmit
+ 154               	.LVL10:
+ 155 0014 8983      		std Y+1,r24
+  63:lib/spi/spi.c **** 	acc[0] = SPI_masterTransmit(0x72);// XH
+ 156               		.loc 1 63 0
+ 157 0016 82E7      		ldi r24,lo8(114)
+ 158 0018 0E94 0000 		call SPI_masterTransmit
+ 159               	.LVL11:
+ 160 001c 8883      		st Y,r24
+  64:lib/spi/spi.c **** 	acc[3] = SPI_masterTransmit(0x72);// YL
+ 161               		.loc 1 64 0
+ 162 001e 82E7      		ldi r24,lo8(114)
+ 163 0020 0E94 0000 		call SPI_masterTransmit
+ 164               	.LVL12:
+ 165 0024 8B83      		std Y+3,r24
+  65:lib/spi/spi.c **** 	acc[2] = SPI_masterTransmit(0x72);// YH
+ 166               		.loc 1 65 0
+ 167 0026 82E7      		ldi r24,lo8(114)
+ 168 0028 0E94 0000 		call SPI_masterTransmit
+ 169               	.LVL13:
+ 170 002c 8A83      		std Y+2,r24
+  66:lib/spi/spi.c **** 	acc[5] = SPI_masterTransmit(0x72);// ZL
+ 171               		.loc 1 66 0
+ 172 002e 82E7      		ldi r24,lo8(114)
+ 173 0030 0E94 0000 		call SPI_masterTransmit
+ 174               	.LVL14:
+ 175 0034 8D83      		std Y+5,r24
+  67:lib/spi/spi.c **** 	acc[4] = SPI_masterTransmit(0x72);// ZH
+ 176               		.loc 1 67 0
+ 177 0036 82E7      		ldi r24,lo8(114)
+ 178 0038 0E94 0000 		call SPI_masterTransmit
+ 179               	.LVL15:
+ 180 003c 8C83      		std Y+4,r24
+  68:lib/spi/spi.c **** 	PORTD = PORTD | (0x80);
+ 181               		.loc 1 68 0
+ 182 003e 5F9A      		sbi 0xb,7
+ 183               	/* epilogue start */
+  69:lib/spi/spi.c **** 	//return acc;
+  70:lib/spi/spi.c **** 	
+  71:lib/spi/spi.c **** }
+ 184               		.loc 1 71 0
+ 185 0040 DF91      		pop r29
+ 186 0042 CF91      		pop r28
+ 187               	.LVL16:
+ 188 0044 0895      		ret
+ 189               		.cfi_endproc
+ 190               	.LFE11:
+ 192               		.section	.text.init_accel,"ax",@progbits
+ 193               	.global	init_accel
+ 195               	init_accel:
+ 196               	.LFB12:
+  72:lib/spi/spi.c **** 
+  73:lib/spi/spi.c **** void init_accel(void)
+  74:lib/spi/spi.c **** {
+ 197               		.loc 1 74 0
+ 198               		.cfi_startproc
+ 199               	/* prologue: function */
+ 200               	/* frame size = 0 */
+ 201               	/* stack size = 0 */
+ 202               	.L__stack_usage = 0
+  75:lib/spi/spi.c **** 	//Changes clock polarity and clock phase for accelerometer
+  76:lib/spi/spi.c **** 	SPCR |= ((1<<CPOL) | (1<<CPHA));
+ 203               		.loc 1 76 0
+ 204 0000 8CB5      		in r24,0x2c
+ 205 0002 8C60      		ori r24,lo8(12)
+ 206 0004 8CBD      		out 0x2c,r24
+  77:lib/spi/spi.c **** 	PORTD = PORTD & ~(0x80);
+ 207               		.loc 1 77 0
+ 208 0006 5F98      		cbi 0xb,7
+  78:lib/spi/spi.c **** 	SPI_masterTransmit(0b00101101);  //access writing to power register
+ 209               		.loc 1 78 0
+ 210 0008 8DE2      		ldi r24,lo8(45)
+ 211 000a 0E94 0000 		call SPI_masterTransmit
+ 212               	.LVL17:
+  79:lib/spi/spi.c **** 	SPI_masterTransmit(0x08);  //places accelerometer in measurement mode
+ 213               		.loc 1 79 0
+ 214 000e 88E0      		ldi r24,lo8(8)
+ 215 0010 0E94 0000 		call SPI_masterTransmit
+ 216               	.LVL18:
+  80:lib/spi/spi.c **** 	PORTD = PORTD | (0x80);
+ 217               		.loc 1 80 0
+ 218 0014 5F9A      		sbi 0xb,7
+ 219 0016 0895      		ret
+ 220               		.cfi_endproc
+ 221               	.LFE12:
+ 223               		.text
+ 224               	.Letext0:
+ 225               		.file 2 "/usr/avr/include/stdint.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 spi.c
+     /tmp/ccAosiOu.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccAosiOu.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccAosiOu.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccAosiOu.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccAosiOu.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccAosiOu.s:13     .text.SPI_masterInit:0000000000000000 SPI_masterInit
+     /tmp/ccAosiOu.s:35     .text.SPI_masterReceive:0000000000000000 SPI_masterReceive
+     /tmp/ccAosiOu.s:61     .text.SPI_masterTransmit:0000000000000000 SPI_masterTransmit
+     /tmp/ccAosiOu.s:88     .text.digiPotInitWiper:0000000000000000 digiPotInitWiper
+     /tmp/ccAosiOu.s:126    .text.accelerometerReceive:0000000000000000 accelerometerReceive
+     /tmp/ccAosiOu.s:195    .text.init_accel:0000000000000000 init_accel
+
+NO UNDEFINED SYMBOLS
