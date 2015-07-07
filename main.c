@@ -1,3 +1,5 @@
+//hi
+
 #define F_CPU           8000000UL              //8Mhz clock
 #define CPU_PRESCALE(n) (CLKPR = 0x80, CLKPR = (n))
 #define CPU_8MHz       0x01
